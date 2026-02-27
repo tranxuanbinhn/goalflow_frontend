@@ -1,0 +1,8 @@
+# Loại bỏ file môi trường
+.env
+
+# Loại bỏ các file seed (tùy thuộc vào cấu trúc dự án của bạn)
+# Ví dụ nếu file seed nằm trong prisma/seed.ts hoặc src/db/seed.ts
+
+dist/
+node_modules/

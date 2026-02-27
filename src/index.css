@@ -1,0 +1,598 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Dark Theme (Default) */
+:root {
+ 
+  --primary-100: #c2d9ea;
+  --primary-50: #e8f0f7;
+  --bg-primary: #0a0a0f;
+  --bg-secondary: #12121a;
+  --bg-card: rgba(255, 255, 255, 0.03);
+  --bg-card-hover: rgba(255, 255, 255, 0.06);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+  
+  /* Dark mode specific */
+  --heatmap-empty: rgba(255, 255, 255, 0.05);
+  --heatmap-level-1: rgba(70, 130, 180, 0.25);
+  --heatmap-level-2: rgba(70, 130, 180, 0.5);
+  --heatmap-level-3: rgba(70, 130, 180, 0.75);
+  --chart-grid: rgba(255, 255, 255, 0.08);
+  --focus-gradient-start: #1a1a2e;
+  --focus-gradient-end: #0a0a0f;
+}
+
+/* Light Theme - Minimal, Elegant, Calm, Focused */
+.light {
+  /* Background layers - subtle, warm, calming */
+  --bg-primary: #fafbfc;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f8f9fa;
+  
+  /* Borders - very subtle, refined */
+  --glass-border: rgba(0, 0, 0, 0.06);
+  --glass-shadow: 0 2px 8px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.04);
+  
+  /* Text - soft contrast for readability */
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+  
+  /* Heatmap - neutral gray tones with blue tint */
+  --heatmap-empty: #f1f3f4;
+  --heatmap-level-1: #b8d4e8;
+  --heatmap-level-2: #7aa8cc;
+  --heatmap-level-3: #4682B4;
+  
+  /* Charts */
+  --chart-grid: rgba(0, 0, 0, 0.06);
+  
+  /* Focus room */
+  --focus-gradient-start: #f1f5f9;
+  --focus-gradient-end: #e2e8f0;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--glass-border) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--glass-border);
+  border-radius: 3px;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Glassmorphism utilities */
+.glass {
+  background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-hover:hover {
+  background: var(--bg-card-hover);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.light .glass-hover:hover {
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+.glass-card {
+  @apply glass rounded-2xl transition-all duration-200;
+}
+
+.glass-card:hover {
+  @apply glass-hover;
+}
+
+/* Checkbox animation */
+.checkbox-container {
+  @apply relative w-6 h-6 cursor-pointer;
+}
+
+.checkbox-circle {
+  @apply absolute inset-0 rounded-full border-2 border-text-muted transition-all duration-200;
+}
+
+.checkbox-circle.checked {
+  @apply bg-primary-500 border-primary-500 scale-110;
+}
+
+.checkbox-inner {
+  @apply absolute inset-1 rounded-full bg-primary-500 scale-0 transition-transform duration-200;
+}
+
+.checkbox-circle.checked .checkbox-inner {
+  @apply scale-100;
+}
+
+/* Strikethrough animation */
+.task-title {
+  @apply transition-all duration-200;
+}
+
+.task-title.completed {
+  @apply line-through opacity-60;
+}
+
+/* Confetti canvas */
+#confetti-canvas {
+  @apply fixed inset-0 pointer-events-none z-50;
+}
+
+/* Focus room */
+.focus-room {
+  @apply fixed inset-0 bg-background-primary z-40;
+  background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a0f 100%);
+}
+
+.light .focus-room {
+  background: radial-gradient(ellipse at center, #e2e8f0 0%, #f8fafc 100%);
+}
+
+/* Page transitions */
+.page-enter {
+  @apply opacity-0 translate-y-4;
+}
+
+.page-enter-active {
+  @apply opacity-100 translate-y-0 transition-all duration-300;
+}
+
+/* Button styles */
+.btn-primary {
+  @apply px-4 py-2 bg-primary-500 text-white rounded-lg font-medium;
+  @apply hover:bg-primary-600 active:scale-95 transition-all duration-200;
+}
+
+.btn-secondary {
+  @apply px-4 py-2 bg-white/5 text-text-primary rounded-lg font-medium;
+  @apply border border-glass-border hover:bg-white/10 active:scale-95 transition-all duration-200;
+}
+
+.light .btn-secondary {
+  @apply bg-black/5 hover:bg-black/10 border-primary-500/30 text-primary-500;
+}
+
+/* Input styles */
+.input-field {
+  @apply w-full px-4 py-3 bg-white/5 border border-glass-border rounded-lg;
+  @apply text-text-primary placeholder:text-text-muted;
+  @apply focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500;
+  @apply transition-all duration-200;
+}
+
+.light .input-field {
+  @apply bg-black/5;
+}
+
+/* Progress ring */
+.progress-ring {
+  transform: rotate(-90deg);
+}
+
+.progress-ring-circle {
+  transition: stroke-dashoffset 0.5s ease-out;
+}
+
+/* Radial progress */
+.radial-progress {
+  position: relative;
+}
+
+.radial-progress-circle {
+  transform: rotate(-90deg);
+  transform-origin: center;
+}
+
+/* Heatmap */
+.heatmap-cell {
+  @apply rounded-sm transition-all duration-200;
+}
+
+.heatmap-cell:hover {
+  @apply ring-2 ring-primary-500 ring-opacity-50;
+}
+
+/* Toast animations */
+.toast-enter {
+  @apply opacity-0 translate-x-8;
+}
+
+.toast-enter-active {
+  @apply opacity-100 translate-x-0 transition-all duration-300;
+}
+
+.toast-exit {
+  @apply opacity-100 translate-x-0;
+}
+
+.toast-exit-active {
+  @apply opacity-0 translate-x-8 transition-all duration-300;
+}
+
+/* Micro-interactions */
+.hover-lift {
+  @apply transition-transform duration-200 hover:-translate-y-0.5;
+}
+
+/* Focus mode */
+.focus-active .sidebar,
+.focus-active .header {
+  @apply opacity-0 pointer-events-none;
+}
+
+/* Select dropdown styles */
+select.input-field {
+  @apply cursor-pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23a1a1aa'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem;
+  padding-right: 2.5rem;
+}
+
+.light select.input-field {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%234682B4'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+}
+
+/* Select dropdown options - dark theme */
+select.input-field option {
+  @apply bg-background-secondary text-text-primary py-2 px-3;
+}
+
+/* Option hover state */
+select.input-field option:hover,
+select.input-field option:focus,
+select.input-field option:checked {
+  @apply bg-primary-500 text-white;
+}
+
+/* Dropdown menu animation */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scaleIn {
+  animation: scaleIn 0.15s ease-out forwards;
+}
+
+/* Slide up animation */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s ease-out forwards;
+}
+
+/* Line clamp utility */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Drag and Drop Styles */
+[data-rbd-draggable-context-id] {
+  transition: transform 0.2s ease;
+}
+
+[data-rbd-draggable-context-id]:focus {
+  outline: none;
+}
+
+[data-rbd-draggable-context-id]:focus-visible {
+  outline: 2px solid #4682B4;
+  outline-offset: 2px;
+}
+
+/* Dragging state */
+[data-rbd-draggable-context-id][data-is-dragging="true"] {
+  cursor: grabbing;
+}
+
+/* Droppable placeholder */
+[data-rbd-droppable-id] {
+  transition: background-color 0.2s ease;
+}
+
+[data-rbd-droppable-id][data-is-dropping="true"] {
+  background-color: rgba(70, 130, 180, 0.1);
+}
+
+/* Smooth scrollbar for kanban */
+.overflow-x-auto {
+  scrollbar-width: thin;
+  scrollbar-color: var(--glass-border) transparent;
+}
+
+.overflow-x-auto::-webkit-scrollbar {
+  height: 8px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb {
+  background-color: var(--glass-border);
+  border-radius: 4px;
+}
+
+/* Kanban card hover effect */
+.kanban-card {
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.kanban-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Column transition */
+.column-transition {
+  transition: min-height 0.3s ease;
+}
+
+/* Task completion animation */
+@keyframes completeTask {
+  0% {
+    transform: scale(1);
+    background-color: var(--bg-card);
+  }
+  50% {
+    transform: scale(1.02);
+    background-color: rgba(34, 197, 94, 0.1);
+  }
+  100% {
+    transform: scale(1);
+    background-color: var(--bg-card);
+  }
+}
+
+.animate-complete-task {
+  animation: completeTask 0.6s ease-out;
+}
+
+/* Checkmark animation */
+@keyframes checkmark {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-checkmark {
+  animation: checkmark 0.3s ease-out forwards;
+}
+
+/* Fade in animation for grid items */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Filter transition animation */
+.filter-transition {
+  transition: all 0.3s ease-out;
+}
+
+/* Task card scale on hover */
+.task-card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.task-card-hover:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Staggered grid animation for task cards */
+@keyframes staggerFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.stagger-item {
+  opacity: 0;
+  animation: staggerFadeIn 0.4s ease-out forwards;
+}
+
+.stagger-item:nth-child(1) { animation-delay: 0ms; }
+.stagger-item:nth-child(2) { animation-delay: 50ms; }
+.stagger-item:nth-child(3) { animation-delay: 100ms; }
+.stagger-item:nth-child(4) { animation-delay: 150ms; }
+.stagger-item:nth-child(5) { animation-delay: 200ms; }
+.stagger-item:nth-child(6) { animation-delay: 250ms; }
+.stagger-item:nth-child(7) { animation-delay: 300ms; }
+.stagger-item:nth-child(8) { animation-delay: 350ms; }
+.stagger-item:nth-child(9) { animation-delay: 400ms; }
+.stagger-item:nth-child(10) { animation-delay: 450ms; }
+.stagger-item:nth-child(11) { animation-delay: 500ms; }
+.stagger-item:nth-child(12) { animation-delay: 550ms; }
+
+/* Grid layout responsive */
+@layer components {
+  .task-grid {
+    @apply grid grid-cols-1 gap-4;
+  }
+  
+  @media (min-width: 640px) {
+    .task-grid {
+      @apply grid-cols-2;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .task-grid {
+      @apply grid-cols-3;
+    }
+  }
+  
+  @media (min-width: 1280px) {
+    .task-grid {
+      @apply grid-cols-4;
+    }
+  }
+}
+
+/* Slide in from right animation */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.3s ease-out forwards;
+}
+
+/* Sparkle particle animation */
+@keyframes sparkle {
+  0% {
+    opacity: 1;
+    transform: rotate(var(--angle)) translateX(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(var(--angle)) translateX(var(--distance)) scale(0);
+  }
+}
+
+.animate-sparkle {
+  animation: sparkle 0.4s ease-out forwards;
+}
+
+/* Center flash effect */
+@keyframes centerFlash {
+  0% {
+    opacity: 0.6;
+    transform: scale(0.5);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+}
+
+.animate-center-flash {
+  animation: centerFlash 0.3s ease-out forwards;
+}
+
+/* Checkbox pop effect - scale up and down */
+@keyframes checkboxPop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-checkbox-pop {
+  animation: checkboxPop 0.2s ease-out;
+}
+
+/* Quick fade out */
+@keyframes quickFadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.animate-quick-fade {
+  animation: quickFadeOut 0.3s ease-out forwards;
+}
+
+/* Scale in for notification */
+@keyframes scaleInNotification {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translate(-50%, -50%);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05) translate(-50%, -50%);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translate(-50%, -50%);
+  }
+}
+
+.animate-scale-in-notification {
+  animation: scaleInNotification 0.3s ease-out forwards;
+}
