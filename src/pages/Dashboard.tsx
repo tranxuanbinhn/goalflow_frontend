@@ -167,84 +167,6 @@ export default function Dashboard() {
       return newSet;
     });
   };
-
-  // Check and auto-complete habits when all tasks are done
-  const checkAndAutoCompleteHabits = () => {
-    setHabits(prev => prev.map(h => {
-      if (!h.tasks || h.tasks.length === 0) return h;
-      
-      const allTasksCompleted = h.tasks.every(t => t.status === 'COMPLETED');
-      const anyTaskCompleted = h.tasks.some(t => t.status === 'COMPLETED');
-      
-      if (allTasksCompleted && !h.completedToday) {
-        // Auto-complete habit
-        goalsAPI.toggleHabitComplete(h.id).then(() => {
-          // Trigger habit completion feedback (sound + confetti)
-          feedbackHabitComplete();
-          // Show notification for habit auto-complete
-          const notificationId = Date.now().toString();
-          setCenteredNotification({ id: notificationId, message: '🎉 Habit completed!' });
-          setTimeout(() => {
-            setCenteredNotification(prev => prev?.id === notificationId ? null : prev);
-          }, 2000);
-          return {
-            ...h,
-            completedToday: true,
-            streak: h.streak + 1,
-          };
-        }).catch(console.error);
-        return {
-          ...h,
-          completedToday: true,
-          streak: h.streak + 1,
-        };
-      } else if (!anyTaskCompleted && h.completedToday) {
-        // Uncomplete habit if all tasks unchecked
-        goalsAPI.toggleHabitComplete(h.id).catch(console.error);
-        return {
-          ...h,
-          completedToday: false,
-          streak: Math.max(0, h.streak - 1),
-        };
-      }
-      
-      return h;
-    }));
-  };
-
-  // Check if all tasks in a habit are now PENDING and uncomplete the habit
-  const checkAndUncompleteHabitForTask = (taskId: string, newStatus: string) => {
-    if (newStatus !== 'PENDING') return;
-    
-    // Find the habit that contains this task
-    const habitWithTask = habits.find(h => h.tasks?.some(t => t.id === taskId));
-    if (!habitWithTask || !habitWithTask.tasks) return;
-    
-    // Check if ALL tasks in this habit are now PENDING
-    const allTasksPending = habitWithTask.tasks.every(t => t.status === 'PENDING' || t.id === taskId);
-    
-    if (allTasksPending && habitWithTask.completedToday) {
-      // All tasks are PENDING, so uncomplete the habit
-      goalsAPI.toggleHabitComplete(habitWithTask.id).catch(console.error);
-      
-      setHabits(prev => prev.map(h => {
-        if (h.id === habitWithTask.id) {
-          return {
-            ...h,
-            completedToday: false,
-            streak: Math.max(0, h.streak - 1),
-          };
-        }
-        return h;
-      }));
-      
-      setStats(prev => ({
-        ...prev,
-        habitsToday: Math.max(0, prev.habitsToday - 1),
-      }));
-    }
-  };
-
   // Toggle single task
   const handleToggleTask = async (taskId: string, currentStatus: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
@@ -292,12 +214,8 @@ export default function Dashboard() {
           completedTasks: prev.completedTasks - 1,
         }));
       }
-
-      // Check if all tasks in any habit are completed - auto-complete habit
-      checkAndAutoCompleteHabits();
-      
-      // Also check if we need to uncomplete the habit when all tasks are unchecked
-      checkAndUncompleteHabitForTask(taskId, newStatus);
+      // Sync with backend source of truth after task status change.
+      await loadData();
       
       if (newStatus === 'COMPLETED') {
         feedbackTaskComplete();
@@ -1163,3 +1081,4 @@ function DeleteConfirmModal({
 
   return createPortal(modalContent, document.body);
 }
+
