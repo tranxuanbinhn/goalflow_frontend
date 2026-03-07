@@ -51,8 +51,23 @@ export default function TaskCard({ task, index, onEdit, onDelete, onStatusChange
   }, [isHighlighted]);
 
   const isOverdue = () => {
-    if (!task.dueDate || task.status === 'COMPLETED') return false;
-    return new Date(task.dueDate) < new Date();
+    if (task.status === 'COMPLETED') return false;
+
+    const now = new Date();
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    if (task.dueDate) {
+      const dueDate = new Date(task.dueDate);
+      dueDate.setHours(0, 0, 0, 0);
+      return dueDate < startOfToday;
+    }
+
+    if (task.createdAt) {
+      const createdAt = new Date(task.createdAt);
+      return createdAt < startOfToday;
+    }
+
+    return false;
   };
 
   const formatDate = (dateString?: string) => {

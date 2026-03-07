@@ -106,24 +106,36 @@ export default function Tasks() {
     }
   };
 
+  const isCompleted = (task: Task) => task.status === 'COMPLETED';
+
   const isOverdue = (task: Task) => {
-    if (!task.dueDate || task.status === 'COMPLETED') return false;
-    return new Date(task.dueDate) < new Date();
+    if (isCompleted(task)) return false;
+
+    const now = new Date();
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    if (task.dueDate) {
+      const dueDate = new Date(task.dueDate);
+      dueDate.setHours(0, 0, 0, 0);
+      return dueDate < startOfToday;
+    }
+
+    if (task.createdAt) {
+      const createdAt = new Date(task.createdAt);
+      return createdAt < startOfToday;
+    }
+
+    return false;
   };
 
   // Filter tasks based on active tab
   const filteredTasks = tasks.filter(task => {
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    
     switch (activeFilter) {
       case 'TODO':
-        if (task.status === 'COMPLETED') return false;
-        if (!task.dueDate) return true;
-        const dueDate = new Date(task.dueDate);
-        return dueDate >= today;
+        if (isCompleted(task)) return false;
+        return !isOverdue(task);
       case 'COMPLETED':
-        return task.status === 'COMPLETED';
+        return isCompleted(task);
       case 'OVERDUE':
         return isOverdue(task);
       default:
@@ -145,8 +157,8 @@ export default function Tasks() {
 
   // Stats
   const totalTasks = tasks.length;
-  const completedCount = tasks.filter(t => t.status === 'COMPLETED').length;
-  const todoCount = tasks.filter(t => t.status !== 'COMPLETED').length;
+  const completedCount = tasks.filter(t => isCompleted(t)).length;
+  const todoCount = tasks.filter(t => !isCompleted(t) && !isOverdue(t)).length;
   const overdueCount = tasks.filter(t => isOverdue(t)).length;
 
   // Stat card data

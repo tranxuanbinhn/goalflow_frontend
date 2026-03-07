@@ -119,8 +119,6 @@ api.interceptors.response.use(
 export const authAPI = {
   login: (data: { email: string; password: string }) =>
     api.post('/auth/login', data),
-  register: (data: { email: string; password: string; name: string }) =>
-    api.post('/auth/register', data),
   getProfile: () => api.get('/auth/profile'),
   updateProfile: (data: { name?: string; avatar?: string }) =>
     api.put('/auth/profile', data),
